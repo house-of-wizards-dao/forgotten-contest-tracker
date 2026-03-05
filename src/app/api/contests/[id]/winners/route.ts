@@ -47,15 +47,20 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
+    // Apply contest default prize unless the client explicitly sent true
+    const prizeWizard = data.prizeWizard || contest.defaultPrize === "wizard";
+    const prizeWarrior = data.prizeWarrior || contest.defaultPrize === "warrior";
+    const prizeImpBox = data.prizeImpBox || contest.defaultPrize === "impBox";
+
     const [winner] = await db
       .insert(contestWinners)
       .values({
         contestId,
         participantId: data.participantId,
         prizeNote: data.prizeNote || null,
-        prizeWizard: data.prizeWizard,
-        prizeWarrior: data.prizeWarrior,
-        prizeImpBox: data.prizeImpBox,
+        prizeWizard,
+        prizeWarrior,
+        prizeImpBox,
       })
       .returning();
 

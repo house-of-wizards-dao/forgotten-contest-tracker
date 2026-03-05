@@ -73,6 +73,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .set({
         name: data.name,
         description: data.description || null,
+        defaultPrize: data.defaultPrize ?? null,
         date: data.date,
         updatedAt: new Date(),
       })

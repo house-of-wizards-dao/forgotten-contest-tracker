@@ -18,6 +18,7 @@ export const contests = sqliteTable("contests", {
   id: text("id").primaryKey().$defaultFn(() => createId()),
   name: text("name").notNull(),
   description: text("description"),
+  defaultPrize: text("default_prize", { enum: ["wizard", "warrior", "impBox"] }),
   date: text("date").notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),

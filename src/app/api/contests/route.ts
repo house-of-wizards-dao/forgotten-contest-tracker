@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
       .values({
         name: data.name,
         description: data.description || null,
+        defaultPrize: data.defaultPrize ?? null,
         date: data.date,
       })
       .returning();

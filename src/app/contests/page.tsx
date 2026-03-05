@@ -11,6 +11,7 @@ interface Contest {
   name: string;
   description: string | null;
   date: string;
+  defaultPrize: "wizard" | "warrior" | "impBox" | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,6 +26,7 @@ export default function ContestsPage() {
   const [name, setName] = React.useState("");
   const [date, setDate] = React.useState("");
   const [description, setDescription] = React.useState("");
+  const [defaultPrize, setDefaultPrize] = React.useState<string | null>(null);
   const [formErrors, setFormErrors] = React.useState<Record<string, string>>(
     {},
   );
@@ -57,6 +59,7 @@ export default function ContestsPage() {
     setName("");
     setDate("");
     setDescription("");
+    setDefaultPrize(null);
     setFormErrors({});
     setDialogOpen(true);
   };
@@ -78,6 +81,7 @@ export default function ContestsPage() {
         name: name.trim(),
         date,
         description: description.trim() || undefined,
+        defaultPrize: defaultPrize || null,
       }),
     });
     if (!res.ok) {
@@ -127,9 +131,16 @@ export default function ContestsPage() {
             >
               <div className="flex items-start justify-between gap-2">
                 <h3 className="font-semibold">{c.name}</h3>
-                <span className="shrink-0 text-xs text-muted-foreground">
-                  {new Date(c.date).toLocaleDateString()}
-                </span>
+                <div className="flex shrink-0 items-center gap-2">
+                  {c.defaultPrize && (
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                      {c.defaultPrize === "impBox" ? "Imp Box" : c.defaultPrize.charAt(0).toUpperCase() + c.defaultPrize.slice(1)}
+                    </span>
+                  )}
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(c.date).toLocaleDateString()}
+                  </span>
+                </div>
               </div>
               {c.description && (
                 <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
@@ -202,6 +213,29 @@ export default function ContestsPage() {
               rows={3}
               className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
             />
+          </div>
+
+          <div>
+            <label
+              htmlFor="contest-default-prize"
+              className="mb-1 block text-sm font-medium"
+            >
+              Default Prize
+            </label>
+            <select
+              id="contest-default-prize"
+              value={defaultPrize ?? ""}
+              onChange={(e) => setDefaultPrize(e.target.value || null)}
+              className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+            >
+              <option value="">None</option>
+              <option value="wizard">Wizard</option>
+              <option value="warrior">Warrior</option>
+              <option value="impBox">Imp Box</option>
+            </select>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Winners added to this contest will automatically receive this prize.
+            </p>
           </div>
 
           {formErrors.server && (

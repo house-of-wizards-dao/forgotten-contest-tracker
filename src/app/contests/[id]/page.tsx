@@ -13,6 +13,7 @@ interface Contest {
   id: string;
   name: string;
   description: string | null;
+  defaultPrize: "wizard" | "warrior" | "impBox" | null;
   date: string;
   createdAt: string;
   updatedAt: string;
@@ -41,6 +42,7 @@ export default function ContestDetailPage() {
   const [editName, setEditName] = React.useState("");
   const [editDate, setEditDate] = React.useState("");
   const [editDescription, setEditDescription] = React.useState("");
+  const [editDefaultPrize, setEditDefaultPrize] = React.useState<string | null>(null);
 
   const fetchContest = React.useCallback(async () => {
     try {
@@ -80,6 +82,7 @@ export default function ContestDetailPage() {
     setEditName(contest.name);
     setEditDate(contest.date.slice(0, 10));
     setEditDescription(contest.description ?? "");
+    setEditDefaultPrize(contest.defaultPrize);
     setEditOpen(true);
   };
 
@@ -95,6 +98,7 @@ export default function ContestDetailPage() {
         name: editName.trim(),
         date: editDate,
         description: editDescription.trim() || undefined,
+        defaultPrize: editDefaultPrize || null,
       }),
     });
     if (!res.ok) {
@@ -237,6 +241,14 @@ export default function ContestDetailPage() {
           {contest.description && (
             <p className="mt-2 text-muted-foreground">{contest.description}</p>
           )}
+          {contest.defaultPrize && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Default prize:{" "}
+              <span className="font-medium text-foreground">
+                {contest.defaultPrize === "impBox" ? "Imp Box" : contest.defaultPrize.charAt(0).toUpperCase() + contest.defaultPrize.slice(1)}
+              </span>
+            </p>
+          )}
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={openEdit}>
@@ -336,6 +348,29 @@ export default function ContestDetailPage() {
               rows={3}
               className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
             />
+          </div>
+
+          <div>
+            <label
+              htmlFor="edit-contest-default-prize"
+              className="mb-1 block text-sm font-medium"
+            >
+              Default Prize
+            </label>
+            <select
+              id="edit-contest-default-prize"
+              value={editDefaultPrize ?? ""}
+              onChange={(e) => setEditDefaultPrize(e.target.value || null)}
+              className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+            >
+              <option value="">None</option>
+              <option value="wizard">Wizard</option>
+              <option value="warrior">Warrior</option>
+              <option value="impBox">Imp Box</option>
+            </select>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Winners added to this contest will automatically receive this prize.
+            </p>
           </div>
 
           <div className="flex justify-end gap-2 pt-2">

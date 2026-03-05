@@ -21,6 +21,7 @@ export const contestSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
   description: z.string().max(2000).optional().or(z.literal("")),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
+  defaultPrize: z.enum(["wizard", "warrior", "impBox"]).nullable().optional(),
 });
 
 export const addWinnerSchema = z.object({
