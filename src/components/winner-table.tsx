@@ -153,7 +153,7 @@ function WinnerTable({ winners, contestId, onStatusChange, onRemove, onRefresh }
                   {w.participant.name}
                 </td>
                 <td className="px-4 py-3">
-                  <span className="inline-flex items-center gap-1 font-mono text-xs">
+                  <span className={`inline-flex items-center gap-1 text-xs ${w.participant.walletAddress.endsWith('.eth') ? '' : 'font-mono'}`}>
                     {formatAddress(w.participant.walletAddress)}
                     <CopyButton text={w.participant.walletAddress} />
                   </span>

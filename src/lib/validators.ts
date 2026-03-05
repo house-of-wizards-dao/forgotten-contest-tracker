@@ -1,8 +1,15 @@
 import { z } from "zod/v4";
 
 const evmAddressRegex = /^0x[0-9a-fA-F]{40}$/;
+const ensNameRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.eth$/;
 
-export const evmAddress = z.string().regex(evmAddressRegex, "Invalid EVM wallet address").transform((addr) => addr.toLowerCase());
+export const evmAddress = z
+  .string()
+  .refine(
+    (val) => evmAddressRegex.test(val) || ensNameRegex.test(val.toLowerCase()),
+    "Invalid wallet address. Must be a 0x hex address or an ENS name (e.g., name.eth)."
+  )
+  .transform((val) => val.toLowerCase());
 
 export const participantSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),

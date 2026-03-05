@@ -40,6 +40,40 @@ describe("evmAddress", () => {
     expect(result.success).toBe(false);
   });
 
+  it("accepts a valid ENS name", () => {
+    const result = evmAddress.safeParse("vitalik.eth");
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toBe("vitalik.eth");
+    }
+  });
+
+  it("accepts a subdomain ENS name", () => {
+    const result = evmAddress.safeParse("pay.vitalik.eth");
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toBe("pay.vitalik.eth");
+    }
+  });
+
+  it("lowercases ENS names", () => {
+    const result = evmAddress.safeParse("Vitalik.ETH");
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toBe("vitalik.eth");
+    }
+  });
+
+  it("rejects ENS name without .eth suffix", () => {
+    const result = evmAddress.safeParse("vitalik.com");
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects empty ENS label", () => {
+    const result = evmAddress.safeParse(".eth");
+    expect(result.success).toBe(false);
+  });
+
   it("lowercases the address", () => {
     const result = evmAddress.safeParse(
       "0xABCDEF1234567890ABCDEF1234567890ABCDEF12"

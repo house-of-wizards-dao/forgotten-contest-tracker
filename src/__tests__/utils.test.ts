@@ -7,6 +7,14 @@ describe("formatAddress", () => {
       formatAddress("0x742d35cc6634c0532925a3b844bc9e7595f2bd18")
     ).toBe("0x742d...bd18");
   });
+
+  it("returns ENS names without truncation", () => {
+    expect(formatAddress("vitalik.eth")).toBe("vitalik.eth");
+  });
+
+  it("returns subdomain ENS names without truncation", () => {
+    expect(formatAddress("pay.vitalik.eth")).toBe("pay.vitalik.eth");
+  });
 });
 
 describe("cn", () => {

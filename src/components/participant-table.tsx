@@ -83,7 +83,7 @@ function ParticipantTable({
               >
                 <td className="px-4 py-3 font-medium">{p.name}</td>
                 <td className="px-4 py-3">
-                  <span className="inline-flex items-center gap-1 font-mono text-xs">
+                  <span className={`inline-flex items-center gap-1 text-xs ${p.walletAddress.endsWith('.eth') ? '' : 'font-mono'}`}>
                     {formatAddress(p.walletAddress)}
                     <CopyButton text={p.walletAddress} />
                   </span>

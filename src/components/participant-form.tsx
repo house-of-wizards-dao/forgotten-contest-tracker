@@ -25,6 +25,7 @@ interface ParticipantFormProps {
 }
 
 const WALLET_REGEX = /^0x[0-9a-fA-F]{40}$/;
+const ENS_REGEX = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.eth$/;
 
 function ParticipantForm({
   initialData,
@@ -49,9 +50,9 @@ function ParticipantForm({
 
     if (!walletAddress.trim()) {
       next.walletAddress = "Wallet address is required.";
-    } else if (!WALLET_REGEX.test(walletAddress)) {
+    } else if (!WALLET_REGEX.test(walletAddress) && !ENS_REGEX.test(walletAddress)) {
       next.walletAddress =
-        "Invalid wallet address. Must be 0x followed by 40 hex characters.";
+        "Invalid wallet address. Must be 0x followed by 40 hex characters, or an ENS name (e.g., name.eth).";
     }
 
     setErrors(next);
@@ -95,7 +96,7 @@ function ParticipantForm({
           id="participant-wallet"
           value={walletAddress}
           onChange={(e) => setWalletAddress(e.target.value)}
-          placeholder="0x..."
+          placeholder="0x... or name.eth"
           className="font-mono"
         />
         {errors.walletAddress && (
