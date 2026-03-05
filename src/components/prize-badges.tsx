@@ -4,9 +4,9 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const prizeConfig = {
-  wizard: { label: "Wizard", className: "bg-purple-500/15 text-purple-700 border-purple-500/30" },
-  warrior: { label: "Warrior", className: "bg-red-500/15 text-red-700 border-red-500/30" },
-  impBox: { label: "Imp Box", className: "bg-amber-500/15 text-amber-700 border-amber-500/30" },
+  wizard: { label: "Wizard", className: "bg-purple-500/15 text-purple-400 border-purple-500/30" },
+  warrior: { label: "Warrior", className: "bg-red-500/15 text-red-400 border-red-500/30" },
+  impBox: { label: "Imp Box", className: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
 } as const;
 
 interface PrizeBadgesProps {

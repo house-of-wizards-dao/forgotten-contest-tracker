@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark" style={{ colorScheme: "dark" }}>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <header className="border-b border-border">
           <nav className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4">
