@@ -4,6 +4,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/copy-button";
 import { PayoutBadge, type PayoutStatus } from "@/components/payout-badge";
+import { PrizeBadges } from "@/components/prize-badges";
 import { formatAddress } from "@/lib/utils";
 
 export interface Winner {
@@ -13,6 +14,9 @@ export interface Winner {
   payoutStatus: PayoutStatus;
   payoutTxHash: string | null;
   prizeNote: string | null;
+  prizeWizard: boolean;
+  prizeWarrior: boolean;
+  prizeImpBox: boolean;
   participant: {
     id: string;
     name: string;
@@ -26,9 +30,10 @@ interface WinnerTableProps {
   onStatusChange: (winnerId: string, status: PayoutStatus) => void;
   onRemove: (winnerId: string) => void;
   onRefresh: () => void;
+  onPrizeToggle?: (winnerId: string, prizeType: "wizard" | "warrior" | "impBox", value: boolean) => void;
 }
 
-function WinnerTable({ winners, contestId, onStatusChange, onRemove, onRefresh }: WinnerTableProps) {
+function WinnerTable({ winners, contestId, onStatusChange, onRemove, onRefresh, onPrizeToggle }: WinnerTableProps) {
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
   const [bulkStatus, setBulkStatus] = React.useState<PayoutStatus>("paid");
 
@@ -124,7 +129,7 @@ function WinnerTable({ winners, contestId, onStatusChange, onRemove, onRefresh }
                 Wallet
               </th>
               <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                Prize Note
+                Prizes
               </th>
               <th className="px-4 py-3 text-left font-medium text-muted-foreground">
                 Payout Status
@@ -158,8 +163,14 @@ function WinnerTable({ winners, contestId, onStatusChange, onRemove, onRefresh }
                     <CopyButton text={w.participant.walletAddress} />
                   </span>
                 </td>
-                <td className="px-4 py-3 text-muted-foreground">
-                  {w.prizeNote || "--"}
+                <td className="px-4 py-3">
+                  <PrizeBadges
+                    prizeWizard={w.prizeWizard}
+                    prizeWarrior={w.prizeWarrior}
+                    prizeImpBox={w.prizeImpBox}
+                    toggleable={!!onPrizeToggle}
+                    onToggle={(prizeType, value) => onPrizeToggle?.(w.id, prizeType, value)}
+                  />
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">

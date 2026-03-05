@@ -26,11 +26,17 @@ export const contestSchema = z.object({
 export const addWinnerSchema = z.object({
   participantId: z.string().min(1),
   prizeNote: z.string().max(500).optional().or(z.literal("")),
+  prizeWizard: z.boolean().optional().default(false),
+  prizeWarrior: z.boolean().optional().default(false),
+  prizeImpBox: z.boolean().optional().default(false),
 });
 
 export const updatePayoutSchema = z.object({
   payoutStatus: z.enum(["pending", "paid", "failed"]),
   payoutTxHash: z.string().optional().or(z.literal("")),
+  prizeWizard: z.boolean().optional(),
+  prizeWarrior: z.boolean().optional(),
+  prizeImpBox: z.boolean().optional(),
 });
 
 export const batchPayoutSchema = z.object({

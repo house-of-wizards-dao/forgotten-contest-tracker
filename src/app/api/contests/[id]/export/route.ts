@@ -36,13 +36,16 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         walletAddress: participants.walletAddress,
         payoutStatus: contestWinners.payoutStatus,
         prizeNote: contestWinners.prizeNote,
+        prizeWizard: contestWinners.prizeWizard,
+        prizeWarrior: contestWinners.prizeWarrior,
+        prizeImpBox: contestWinners.prizeImpBox,
         payoutTxHash: contestWinners.payoutTxHash,
       })
       .from(contestWinners)
       .innerJoin(participants, eq(contestWinners.participantId, participants.id))
       .where(eq(contestWinners.contestId, id));
 
-    const header = "Name,Wallet Address,Payout Status,Prize Note,Payout TX Hash";
+    const header = "Name,Wallet Address,Payout Status,Prize Note,Wizard,Warrior,Imp Box,Payout TX Hash";
     const rows = winners.map(
       (w) =>
         [
@@ -50,6 +53,9 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
           escapeCsvField(w.walletAddress),
           escapeCsvField(w.payoutStatus),
           escapeCsvField(w.prizeNote),
+          w.prizeWizard ? "Yes" : "No",
+          w.prizeWarrior ? "Yes" : "No",
+          w.prizeImpBox ? "Yes" : "No",
           escapeCsvField(w.payoutTxHash),
         ].join(",")
     );

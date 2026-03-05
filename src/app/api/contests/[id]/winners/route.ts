@@ -53,6 +53,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         contestId,
         participantId: data.participantId,
         prizeNote: data.prizeNote || null,
+        prizeWizard: data.prizeWizard,
+        prizeWarrior: data.prizeWarrior,
+        prizeImpBox: data.prizeImpBox,
       })
       .returning();
 

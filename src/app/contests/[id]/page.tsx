@@ -167,6 +167,34 @@ export default function ContestDetailPage() {
     await fetchContest();
   };
 
+  const handlePrizeToggle = async (
+    winnerId: string,
+    prizeType: "wizard" | "warrior" | "impBox",
+    value: boolean,
+  ) => {
+    const winner = winners.find((w) => w.id === winnerId);
+    if (!winner) return;
+
+    const prizeField =
+      prizeType === "wizard" ? "prizeWizard" :
+      prizeType === "warrior" ? "prizeWarrior" : "prizeImpBox";
+
+    const res = await fetch(`/api/contests/${params.id}/winners/${winnerId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        payoutStatus: winner.payoutStatus,
+        [prizeField]: value,
+      }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: "Request failed" }));
+      alert(err.error ?? "Failed to update prize");
+      return;
+    }
+    await fetchContest();
+  };
+
   const handleExport = () => {
     window.open(`/api/contests/${params.id}/export`, "_blank");
   };
@@ -254,6 +282,7 @@ export default function ContestDetailPage() {
           onStatusChange={handleStatusChange}
           onRemove={handleRemoveWinner}
           onRefresh={fetchContest}
+          onPrizeToggle={handlePrizeToggle}
         />
       </div>
 

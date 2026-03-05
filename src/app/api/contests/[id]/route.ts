@@ -30,6 +30,9 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         payoutStatus: contestWinners.payoutStatus,
         payoutTxHash: contestWinners.payoutTxHash,
         prizeNote: contestWinners.prizeNote,
+        prizeWizard: contestWinners.prizeWizard,
+        prizeWarrior: contestWinners.prizeWarrior,
+        prizeImpBox: contestWinners.prizeImpBox,
         participant: {
           id: participants.id,
           name: participants.name,

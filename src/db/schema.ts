@@ -1,4 +1,7 @@
 import { sqliteTable, text, integer, uniqueIndex, check } from "drizzle-orm/sqlite-core";
+
+export const PRIZE_TYPES = ["wizard", "warrior", "impBox"] as const;
+export type PrizeType = typeof PRIZE_TYPES[number];
 import { createId } from "@paralleldrive/cuid2";
 import { sql } from "drizzle-orm";
 
@@ -29,6 +32,9 @@ export const contestWinners = sqliteTable("contest_winners", {
   payoutStatus: text("payout_status", { enum: ["pending", "paid", "failed"] }).notNull().default("pending"),
   payoutTxHash: text("payout_tx_hash"),
   prizeNote: text("prize_note"),
+  prizeWizard: integer("prize_wizard", { mode: "boolean" }).notNull().default(false),
+  prizeWarrior: integer("prize_warrior", { mode: "boolean" }).notNull().default(false),
+  prizeImpBox: integer("prize_imp_box", { mode: "boolean" }).notNull().default(false),
 }, (table) => [
   uniqueIndex("contest_participant_unique").on(table.contestId, table.participantId),
 ]);

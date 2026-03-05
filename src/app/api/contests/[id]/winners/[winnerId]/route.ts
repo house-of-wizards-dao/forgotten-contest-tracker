@@ -52,12 +52,17 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     const data = validation.data;
 
+    const updates: Record<string, unknown> = {
+      payoutStatus: data.payoutStatus,
+      payoutTxHash: data.payoutTxHash || null,
+    };
+    if (data.prizeWizard !== undefined) updates.prizeWizard = data.prizeWizard;
+    if (data.prizeWarrior !== undefined) updates.prizeWarrior = data.prizeWarrior;
+    if (data.prizeImpBox !== undefined) updates.prizeImpBox = data.prizeImpBox;
+
     const [updated] = await db
       .update(contestWinners)
-      .set({
-        payoutStatus: data.payoutStatus,
-        payoutTxHash: data.payoutTxHash || null,
-      })
+      .set(updates)
       .where(
         and(
           eq(contestWinners.id, winnerId),
