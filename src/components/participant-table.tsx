@@ -19,12 +19,14 @@ interface ParticipantTableProps {
   participants: Participant[];
   onEdit: (participant: Participant) => void;
   onDelete: (participant: Participant) => void;
+  onAddToContest?: (participant: Participant) => void;
 }
 
 function ParticipantTable({
   participants,
   onEdit,
   onDelete,
+  onAddToContest,
 }: ParticipantTableProps) {
   const [search, setSearch] = React.useState("");
 
@@ -91,6 +93,15 @@ function ParticipantTable({
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="inline-flex gap-1">
+                    {onAddToContest && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onAddToContest(p)}
+                      >
+                        Add to Contest
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
