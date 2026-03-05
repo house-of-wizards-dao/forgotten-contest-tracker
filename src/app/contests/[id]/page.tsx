@@ -94,7 +94,7 @@ export default function ContestDetailPage() {
       body: JSON.stringify({
         name: editName.trim(),
         date: editDate,
-        description: editDescription.trim() || null,
+        description: editDescription.trim() || undefined,
       }),
     });
     if (!res.ok) {

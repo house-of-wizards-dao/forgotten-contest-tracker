@@ -77,7 +77,7 @@ export default function ContestsPage() {
       body: JSON.stringify({
         name: name.trim(),
         date,
-        description: description.trim() || null,
+        description: description.trim() || undefined,
       }),
     });
     if (!res.ok) {
