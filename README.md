@@ -10,7 +10,7 @@ A self-hosted web application that replaces Google Sheets for tracking contest w
 - **Payout workflow** -- track per-winner payout status (pending / paid / failed), individually or in bulk
 - **CSV export** -- download a contest's winner list as a CSV file (name, wallet, status, prize note, tx hash)
 - **API-key authentication** -- optional `X-API-Key` header protects all mutating endpoints
-- **Docker deployment** -- single `docker compose up -d` to run in production with persistent SQLite storage
+- **Docker deployment** -- single `docker compose up -d` to run in production
 
 ## Tech Stack
 
@@ -21,7 +21,7 @@ A self-hosted web application that replaces Google Sheets for tracking contest w
 | Language    | TypeScript 5.9 (strict mode)                    |
 | Styling     | Tailwind CSS v4 with `@tailwindcss/postcss`     |
 | ORM         | Drizzle ORM 0.45 + drizzle-kit                  |
-| Database    | SQLite via `better-sqlite3` (WAL mode)          |
+| Database    | PostgreSQL via Supabase (`postgres.js` driver)  |
 | Validation  | Zod 4                                           |
 | IDs         | CUID2 (`@paralleldrive/cuid2`)                  |
 | Container   | Multi-stage Dockerfile + docker-compose          |
@@ -31,6 +31,7 @@ A self-hosted web application that replaces Google Sheets for tracking contest w
 
 - **Node.js** 20 or later
 - **npm** (ships with Node.js)
+- **A PostgreSQL database** (Supabase recommended, or any PostgreSQL instance)
 - **Docker** and **Docker Compose** (for production deployment only)
 
 ## Getting Started
@@ -41,15 +42,27 @@ A self-hosted web application that replaces Google Sheets for tracking contest w
 npm install
 ```
 
-### 2. Push the database schema
+### 2. Configure the database connection
 
-The SQLite database file is created automatically in `data/tracker.db`.
+Copy the example environment file and fill in your Supabase (or PostgreSQL) connection string:
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` and set `DATABASE_URL` to your PostgreSQL connection string:
+
+```bash
+DATABASE_URL=postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres
+```
+
+### 3. Push the database schema
 
 ```bash
 npm run db:push
 ```
 
-### 3. Start the development server
+### 4. Start the development server
 
 ```bash
 npm run dev
@@ -59,14 +72,14 @@ The app is available at [http://localhost:3000](http://localhost:3000).
 
 ## Database Commands
 
-| Command              | Description                                  |
-| -------------------- | -------------------------------------------- |
-| `npm run db:push`    | Push the Drizzle schema directly to SQLite   |
-| `npm run db:generate`| Generate SQL migration files in `./drizzle`  |
-| `npm run db:migrate` | Run pending migrations                       |
-| `npm run db:studio`  | Open Drizzle Studio (visual database browser)|
+| Command              | Description                                     |
+| -------------------- | ----------------------------------------------- |
+| `npm run db:push`    | Push the Drizzle schema directly to PostgreSQL  |
+| `npm run db:generate`| Generate SQL migration files in `./drizzle`     |
+| `npm run db:migrate` | Run pending migrations                          |
+| `npm run db:studio`  | Open Drizzle Studio (visual database browser)   |
 
-The database file lives at `data/tracker.db` and is gitignored. SQLite is configured with WAL journal mode, a 5-second busy timeout, and foreign keys enabled.
+The database is a remote PostgreSQL instance (Supabase). The connection uses the `postgres.js` driver with `prepare: false` for compatibility with Supabase's PgBouncer transaction pooling.
 
 ## Production Deployment (Docker)
 
@@ -81,7 +94,8 @@ This does the following:
 1. Builds a multi-stage Docker image (~Node 20 Alpine base).
 2. Runs `drizzle-kit push` at container startup to ensure the schema is up to date.
 3. Starts the Next.js standalone server on port **3000**.
-4. Persists the SQLite database in a named Docker volume (`forgotten-contest-tracker-data`).
+
+The `DATABASE_URL` environment variable must be set. You can provide it via a `.env` file alongside `docker-compose.yml` or pass it directly in the compose configuration.
 
 The container includes a health check that polls `http://localhost:3000` every 30 seconds.
 
@@ -95,12 +109,14 @@ docker compose up -d --build
 
 | Variable              | Required | Description                                                                 |
 | --------------------- | -------- | --------------------------------------------------------------------------- |
+| `DATABASE_URL`        | **Yes**  | PostgreSQL connection string (e.g., `postgresql://user:pass@host:port/db`). Required for both local development and Docker. |
 | `API_KEY`             | No       | Server-side secret. When set, all POST/PUT/PATCH/DELETE API requests must include a matching `X-API-Key` header. When unset, all requests are allowed (development mode). |
 | `NEXT_PUBLIC_API_KEY` | No       | Client-side copy of the API key. The built-in `apiFetch` helper reads this and automatically attaches the `X-API-Key` header to mutating requests from the browser. |
 
 For local development, create a `.env.local` file:
 
 ```bash
+DATABASE_URL=postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres
 API_KEY=your-secret-key-here
 NEXT_PUBLIC_API_KEY=your-secret-key-here
 ```
@@ -114,10 +130,9 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - DATABASE_URL=${DATABASE_URL}
       - API_KEY=your-secret-key-here
       - NEXT_PUBLIC_API_KEY=your-secret-key-here
-    volumes:
-      - forgotten-contest-tracker-data:/app/data
 ```
 
 ## Authentication
@@ -172,12 +187,12 @@ All endpoints return JSON unless otherwise noted. Mutating endpoints require the
 
 ```
 tracker/
+├── .env.example                # Example environment file with DATABASE_URL placeholder
 ├── docker-compose.yml          # Single-service Docker Compose config
 ├── Dockerfile                  # Multi-stage build (deps -> build -> runner)
 ├── entrypoint.sh               # Runs drizzle-kit push then starts the server
-├── drizzle.config.ts           # Drizzle Kit configuration
+├── drizzle.config.ts           # Drizzle Kit configuration (PostgreSQL dialect)
 ├── vitest.config.ts            # Vitest test runner configuration
-├── data/                       # SQLite database file (gitignored, Docker volume-mounted)
 ├── drizzle/                    # Generated SQL migration files
 ├── src/
 │   ├── middleware.ts            # API key authentication middleware
@@ -218,7 +233,7 @@ tracker/
 │   │   └── winner-table.tsx     # Winner list with bulk selection and status controls
 │   ├── db/
 │   │   ├── schema.ts            # Drizzle table definitions (participants, contests, contest_winners)
-│   │   └── index.ts             # Database connection singleton (WAL mode, foreign keys)
+│   │   └── index.ts             # PostgreSQL connection singleton (postgres.js driver)
 │   └── lib/
 │       ├── validators.ts        # Zod schemas (EVM address, participant, contest, winner, payout)
 │       └── utils.ts             # cn() helper, formatAddress(), apiFetch() with API key injection
@@ -242,7 +257,7 @@ npm run test:watch
 
 ## Data Model
 
-The application uses three tables:
+The application uses three tables in PostgreSQL:
 
 - **participants** -- `id`, `name`, `wallet_address` (unique, lowercase `0x` + 40 hex chars), `notes`, `created_at`, `updated_at`
 - **contests** -- `id`, `name`, `description`, `date` (YYYY-MM-DD, enforced by CHECK constraint), `created_at`, `updated_at`
