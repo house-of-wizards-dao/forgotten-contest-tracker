@@ -1,6 +1,6 @@
-# Contest Winner Tracker -- User Guide
+# Forgotten Contest Tracker -- User Guide
 
-This guide walks through every feature of the Contest Winner Tracker application, from initial setup to daily use.
+This guide walks through every feature of the Forgotten Contest Tracker application, from initial setup to daily use.
 
 ## Table of Contents
 
@@ -254,7 +254,7 @@ NEXT_PUBLIC_API_KEY=my-secret-key
 
 ```yaml
 services:
-  tracker:
+  forgotten-contest-tracker:
     build: .
     ports:
       - "3000:3000"
@@ -262,7 +262,7 @@ services:
       - API_KEY=my-secret-key
       - NEXT_PUBLIC_API_KEY=my-secret-key
     volumes:
-      - tracker-data:/app/data
+      - forgotten-contest-tracker-data:/app/data
 ```
 
 ### How it works

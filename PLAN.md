@@ -1,4 +1,4 @@
-# Contest Winner Tracker — Implementation Plan
+# Forgotten Contest Tracker — Implementation Plan
 
 ## Context
 

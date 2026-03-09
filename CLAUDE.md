@@ -1,4 +1,4 @@
-# Contest Winner Tracker
+# Forgotten Contest Tracker
 
 A Dockerized web application that replaces Google Sheets for tracking contest winners and EVM wallet addresses. Built with Next.js App Router, Drizzle ORM, SQLite, and Tailwind CSS.
 

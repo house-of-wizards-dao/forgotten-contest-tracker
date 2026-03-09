@@ -3,7 +3,7 @@ import Link from "next/link";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
-  title: "Contest Winner Tracker",
+  title: "Forgotten Contest Tracker",
   description: "Track contest participants, winners, and payouts",
 };
 
@@ -38,7 +38,7 @@ export default function RootLayout({
               href="/"
               className="text-base font-semibold tracking-tight text-foreground"
             >
-              Contest Tracker
+              Forgotten Contest Tracker
             </Link>
             <div className="flex items-center gap-4">
               <NavLink href="/">Dashboard</NavLink>

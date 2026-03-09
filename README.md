@@ -1,4 +1,4 @@
-# Contest Winner Tracker
+# Forgotten Contest Tracker
 
 A self-hosted web application that replaces Google Sheets for tracking contest winners and EVM wallet addresses. Built for teams that run frequent contests and need a searchable participant directory, per-contest winner management, payout status tracking, and one-click CSV export of wallet addresses.
 
@@ -81,7 +81,7 @@ This does the following:
 1. Builds a multi-stage Docker image (~Node 20 Alpine base).
 2. Runs `drizzle-kit push` at container startup to ensure the schema is up to date.
 3. Starts the Next.js standalone server on port **3000**.
-4. Persists the SQLite database in a named Docker volume (`tracker-data`).
+4. Persists the SQLite database in a named Docker volume (`forgotten-contest-tracker-data`).
 
 The container includes a health check that polls `http://localhost:3000` every 30 seconds.
 
@@ -109,7 +109,7 @@ For Docker, pass environment variables in `docker-compose.yml`:
 
 ```yaml
 services:
-  tracker:
+  forgotten-contest-tracker:
     build: .
     ports:
       - "3000:3000"
@@ -117,7 +117,7 @@ services:
       - API_KEY=your-secret-key-here
       - NEXT_PUBLIC_API_KEY=your-secret-key-here
     volumes:
-      - tracker-data:/app/data
+      - forgotten-contest-tracker-data:/app/data
 ```
 
 ## Authentication
