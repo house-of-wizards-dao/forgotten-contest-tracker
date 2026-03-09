@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
 import { WinnerCombobox } from "@/components/winner-combobox";
 import { WinnerTable, type Winner } from "@/components/winner-table";
+import { ImportCsvDialog } from "@/components/import-csv-dialog";
 import type { PayoutStatus } from "@/components/payout-badge";
 
 interface Contest {
@@ -36,6 +37,9 @@ export default function ContestDetailPage() {
   >([]);
   const [loading, setLoading] = React.useState(true);
   const [notFound, setNotFound] = React.useState(false);
+
+  // Import dialog
+  const [importOpen, setImportOpen] = React.useState(false);
 
   // Edit dialog
   const [editOpen, setEditOpen] = React.useState(false);
@@ -282,11 +286,16 @@ export default function ContestDetailPage() {
           <h2 className="text-lg font-semibold">
             Winners ({winners.length})
           </h2>
-          {winners.length > 0 && (
-            <Button variant="outline" size="sm" onClick={handleExport}>
-              Export CSV
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setImportOpen(true)}>
+              Import CSV
             </Button>
-          )}
+            {winners.length > 0 && (
+              <Button variant="outline" size="sm" onClick={handleExport}>
+                Export CSV
+              </Button>
+            )}
+          </div>
         </div>
         <WinnerTable
           winners={winners}
@@ -297,6 +306,14 @@ export default function ContestDetailPage() {
           onPrizeToggle={handlePrizeToggle}
         />
       </div>
+
+      {/* Import CSV dialog */}
+      <ImportCsvDialog
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        contestId={params.id}
+        onImportComplete={fetchContest}
+      />
 
       {/* Edit dialog */}
       <Dialog
