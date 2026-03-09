@@ -1,18 +1,16 @@
 import Link from "next/link";
-import { getDb } from "@/db";
+import { db } from "@/db";
 import { participants, contests } from "@/db/schema";
 import { desc, sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const db = getDb();
-
   const [{ count: participantCount }] = await db
-    .select({ count: sql<number>`count(*)` })
+    .select({ count: sql<number>`cast(count(*) as integer)` })
     .from(participants);
   const [{ count: contestCount }] = await db
-    .select({ count: sql<number>`count(*)` })
+    .select({ count: sql<number>`cast(count(*) as integer)` })
     .from(contests);
   const recentContests = await db
     .select()

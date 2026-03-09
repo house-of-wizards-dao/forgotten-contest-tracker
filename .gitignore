@@ -28,11 +28,10 @@ yarn-error.log*
 # env files
 .env*.local
 
+# Legacy SQLite data directory
+/data/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
-# SQLite data
-/data/*.db
-/data/*.db-wal
-/data/*.db-shm

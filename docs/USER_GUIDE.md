@@ -25,31 +25,39 @@ This guide walks through every feature of the Forgotten Contest Tracker applicat
    npm install
    ```
 
-2. Push the database schema to create the SQLite database:
+2. Create a `.env.local` file with your Supabase connection string:
+
+   ```bash
+   DATABASE_URL=postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres
+   ```
+
+3. Push the database schema to PostgreSQL:
 
    ```bash
    npm run db:push
    ```
 
-3. Start the development server:
+4. Start the development server:
 
    ```bash
    npm run dev
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Option B: Docker (production)
 
-1. Run the application with Docker Compose:
+1. Set the `DATABASE_URL` environment variable (e.g. in a `.env` file alongside `docker-compose.yml`).
+
+2. Run the application with Docker Compose:
 
    ```bash
    docker compose up -d
    ```
 
-2. The database schema is applied automatically on container startup. No manual migration step is needed.
+3. The database schema is applied automatically on first container startup. No manual migration step is needed.
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Optional: Set an API key
 
@@ -259,10 +267,9 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - DATABASE_URL=${DATABASE_URL}
       - API_KEY=my-secret-key
       - NEXT_PUBLIC_API_KEY=my-secret-key
-    volumes:
-      - forgotten-contest-tracker-data:/app/data
 ```
 
 ### How it works

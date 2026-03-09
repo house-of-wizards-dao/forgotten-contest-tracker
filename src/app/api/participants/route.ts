@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { participants } from "@/db/schema";
 import { participantSchema } from "@/lib/validators";
 import { asc, or, like } from "drizzle-orm";
+import { isUniqueViolation } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -57,10 +58,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ participant }, { status: 201 });
   } catch (error: unknown) {
-    if (
-      error instanceof Error &&
-      error.message.includes("UNIQUE constraint failed")
-    ) {
+    if (isUniqueViolation(error)) {
       return NextResponse.json(
         { error: "A participant with this wallet address already exists" },
         { status: 409 }

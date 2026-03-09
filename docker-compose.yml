@@ -3,8 +3,8 @@ services:
     build: .
     ports:
       - "3000:3000"
-    volumes:
-      - forgotten-contest-tracker-data:/app/data
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
@@ -12,6 +12,3 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-
-volumes:
-  forgotten-contest-tracker-data:

@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { contests, contestWinners, participants } from "@/db/schema";
 import { addWinnerSchema } from "@/lib/validators";
 import { eq } from "drizzle-orm";
+import { isUniqueViolation } from "@/lib/utils";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -66,10 +67,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ winner }, { status: 201 });
   } catch (error: unknown) {
-    if (
-      error instanceof Error &&
-      error.message.includes("UNIQUE constraint failed")
-    ) {
+    if (isUniqueViolation(error)) {
       return NextResponse.json(
         { error: "This participant is already a winner in this contest" },
         { status: 409 }

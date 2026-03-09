@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-# Push schema to the volume-mounted database at runtime
-npx drizzle-kit push
+# Apply schema migrations to PostgreSQL (only on first boot or schema changes)
+npx drizzle-kit push --force
 
 # Start the Next.js server
 exec node server.js

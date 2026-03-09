@@ -1,6 +1,6 @@
 # Forgotten Contest Tracker
 
-A Dockerized web application that replaces Google Sheets for tracking contest winners and EVM wallet addresses. Built with Next.js App Router, Drizzle ORM, SQLite, and Tailwind CSS.
+A Dockerized web application that replaces Google Sheets for tracking contest winners and EVM wallet addresses. Built with Next.js App Router, Drizzle ORM, PostgreSQL (Supabase), and Tailwind CSS.
 
 ## Quick Start
 
@@ -12,7 +12,7 @@ npm run dev
 docker compose up -d
 
 # Database
-npm run db:push      # Push schema to SQLite
+npm run db:push      # Push schema to PostgreSQL
 npm run db:generate  # Generate migrations
 npm run db:migrate   # Run migrations
 npm run db:studio    # Open Drizzle Studio
@@ -24,7 +24,7 @@ npm run db:studio    # Open Drizzle Studio
 - `src/components/` -- React components (UI primitives in `ui/`, feature components at top level)
 - `src/db/` -- Drizzle ORM schema and database connection
 - `src/lib/` -- Zod validators and utility functions
-- `data/` -- SQLite database file (gitignored, Docker volume-mounted)
+- `.env.local` -- Database connection string (DATABASE_URL, gitignored)
 
 ## Key Conventions
 
@@ -45,7 +45,7 @@ npm run db:studio    # Open Drizzle Studio
 - **Framework:** Next.js 16 (App Router) with React 19
 - **Language:** TypeScript 5.9 (strict mode)
 - **ORM:** Drizzle ORM 0.45 with drizzle-kit
-- **Database:** SQLite via better-sqlite3 (WAL mode)
+- **Database:** PostgreSQL via Supabase (postgres.js driver)
 - **Styling:** Tailwind CSS 4.2 with PostCSS
 - **Validation:** Zod 4
 - **Containerization:** Docker (multi-stage) + docker-compose
@@ -61,9 +61,9 @@ npm run db:studio    # Open Drizzle Studio
 | React components, hooks, state management | `react-component-architect` | Component design, combobox, forms, tables |
 | Tailwind styling, responsive layout, theming | `tailwind-css-expert` | Tailwind v4 utility classes and design system |
 | REST API design, endpoint contracts, error handling | `api-architect` | API route structure, validation patterns, CSV export |
-| Database schema, queries, migrations | `backend-developer` | Drizzle ORM schema changes, SQLite queries |
+| Database schema, queries, migrations | `backend-developer` | Drizzle ORM schema changes, PostgreSQL queries |
 | Code quality, security review, PR checks | `code-reviewer` | Always run before merging; will flag EVM address handling |
-| Performance profiling, query optimization | `performance-optimizer` | SQLite query plans, bundle size, Docker image optimization |
+| Performance profiling, query optimization | `performance-optimizer` | PostgreSQL query plans, bundle size, Docker image optimization |
 | README, API docs, onboarding guides | `documentation-specialist` | Keep docs in sync after feature changes |
 | Codebase exploration, architecture audit | `code-archaeologist` | Use when onboarding or before major refactors |
 | Multi-step feature planning, task breakdown | `tech-lead-orchestrator` | Complex features spanning API + UI + DB layers |

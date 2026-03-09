@@ -1,6 +1,14 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+export function isUniqueViolation(error: unknown): boolean {
+  return error instanceof Error && "code" in error && (error as Record<string, unknown>).code === "23505";
+}
+
+export function isForeignKeyViolation(error: unknown): boolean {
+  return error instanceof Error && "code" in error && (error as Record<string, unknown>).code === "23503";
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

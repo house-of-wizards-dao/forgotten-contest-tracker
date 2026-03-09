@@ -1,32 +1,27 @@
-import Database from "better-sqlite3";
-import { drizzle, type BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "./schema";
-import path from "path";
-import fs from "fs";
 
-let _db: BetterSQLite3Database<typeof schema> | null = null;
+type DB = ReturnType<typeof drizzle<typeof schema>>;
 
-export function getDb(): BetterSQLite3Database<typeof schema> {
+let _db: DB | null = null;
+
+function getDb(): DB {
   if (_db) return _db;
 
-  const dataDir = path.join(process.cwd(), "data");
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL environment variable is required");
   }
 
-  const dbPath = path.join(dataDir, "tracker.db");
-  const sqlite = new Database(dbPath);
-
-  sqlite.pragma("journal_mode = WAL");
-  sqlite.pragma("busy_timeout = 5000");
-  sqlite.pragma("foreign_keys = ON");
-
-  _db = drizzle(sqlite, { schema });
+  // prepare: false is required for Supabase's PgBouncer (transaction pooling mode)
+  const client = postgres(connectionString, { prepare: false });
+  _db = drizzle(client, { schema });
   return _db;
 }
 
-// Re-export for convenience - lazy getter
-export const db = new Proxy({} as BetterSQLite3Database<typeof schema>, {
+// Lazy proxy so the connection is only created on first use (not at import/build time)
+export const db = new Proxy({} as DB, {
   get(_, prop) {
     return (getDb() as unknown as Record<string | symbol, unknown>)[prop];
   },

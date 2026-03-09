@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { participants } from "@/db/schema";
 import { participantSchema } from "@/lib/validators";
 import { eq } from "drizzle-orm";
+import { isUniqueViolation, isForeignKeyViolation } from "@/lib/utils";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -66,10 +67,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ participant: updated });
   } catch (error: unknown) {
-    if (
-      error instanceof Error &&
-      error.message.includes("UNIQUE constraint failed")
-    ) {
+    if (isUniqueViolation(error)) {
       return NextResponse.json(
         { error: "A participant with this wallet address already exists" },
         { status: 409 }
@@ -101,10 +99,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
-    if (
-      error instanceof Error &&
-      error.message.includes("FOREIGN KEY constraint failed")
-    ) {
+    if (isForeignKeyViolation(error)) {
       return NextResponse.json(
         {
           error:
